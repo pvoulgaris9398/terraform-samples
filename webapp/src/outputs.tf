@@ -1,15 +1,27 @@
 output "vpc_id" {
-  value = aws_vpc.main.id
+  value = module.network.vpc_id
 }
 
 output "public_subnets" {
-  value = aws_subnet.public[*].id
+  value = module.network.public_subnets
 }
 
 output "api_subnets" {
-  value = aws_subnet.api[*].id
+  value = module.network.api_subnets
 }
 
 output "db_subnets" {
-  value = aws_subnet.db[*].id
+  value = module.network.db_subnets
+}
+
+output "web_security_group_id" {
+  value = module.security.web_sg_id
+}
+
+output "api_security_group_id" {
+  value = module.security.api_sg_id
+}
+
+output "db_security_group_id" {
+  value = module.security.db_sg_id
 }
