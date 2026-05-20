@@ -2,6 +2,10 @@ variable "vpc_id" {
   type = string
 }
 
+variable "environment" {
+  type = string
+}
+
 variable "web_cidr_blocks" {
   type    = list(string)
   default = ["0.0.0.0/0"]

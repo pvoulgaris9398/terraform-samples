@@ -13,6 +13,11 @@ variable "az_count" {
   default = 2
 }
 
+variable "environment" {
+  type    = string
+  default = "dev01"
+}
+
 variable "web_cidr_blocks" {
   type    = list(string)
   default = ["0.0.0.0/0"]

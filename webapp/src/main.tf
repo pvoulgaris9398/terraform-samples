@@ -14,9 +14,10 @@ provider "aws" {
 }
 
 module "network" {
-  source   = "./modules/network"
-  vpc_cidr = var.vpc_cidr
-  az_count = var.az_count
+  source      = "./modules/network"
+  vpc_cidr    = var.vpc_cidr
+  az_count    = var.az_count
+  environment = var.environment
 }
 
 module "security" {
@@ -28,4 +29,5 @@ module "security" {
   web_sg_name     = var.web_sg_name
   api_sg_name     = var.api_sg_name
   db_sg_name      = var.db_sg_name
+  environment     = var.environment
 }

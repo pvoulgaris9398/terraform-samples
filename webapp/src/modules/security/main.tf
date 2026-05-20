@@ -1,3 +1,9 @@
+locals {
+  default_tags = {
+    Environment = var.environment
+  }
+}
+
 resource "aws_security_group" "web" {
   name   = var.web_sg_name
   vpc_id = var.vpc_id
@@ -24,6 +30,10 @@ resource "aws_security_group" "web" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = merge(local.default_tags, {
+    Name = var.web_sg_name
+  })
 }
 
 resource "aws_security_group" "api" {
@@ -44,6 +54,10 @@ resource "aws_security_group" "api" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = merge(local.default_tags, {
+    Name = var.api_sg_name
+  })
 }
 
 resource "aws_security_group" "db" {
@@ -64,4 +78,8 @@ resource "aws_security_group" "db" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = merge(local.default_tags, {
+    Name = var.db_sg_name
+  })
 }

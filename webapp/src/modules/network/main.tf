@@ -4,6 +4,10 @@ data "aws_availability_zones" "available" {
 
 locals {
   azs = slice(data.aws_availability_zones.available.names, 0, var.az_count)
+
+  default_tags = {
+    Environment = var.environment
+  }
 }
 
 resource "aws_vpc" "main" {
@@ -11,17 +15,17 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "three-tier-vpc"
-  }
+  })
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "main-igw"
-  }
+  })
 }
 
 resource "aws_subnet" "public" {
@@ -32,10 +36,10 @@ resource "aws_subnet" "public" {
   cidr_block              = cidrsubnet(var.vpc_cidr, 8, count.index)
   map_public_ip_on_launch = true
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "public-${local.azs[count.index]}"
     Tier = "web"
-  }
+  })
 }
 
 resource "aws_subnet" "api" {
@@ -45,10 +49,10 @@ resource "aws_subnet" "api" {
   availability_zone = local.azs[count.index]
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 10)
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "api-${local.azs[count.index]}"
     Tier = "api"
-  }
+  })
 }
 
 resource "aws_subnet" "db" {
@@ -58,10 +62,10 @@ resource "aws_subnet" "db" {
   availability_zone = local.azs[count.index]
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 20)
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "db-${local.azs[count.index]}"
     Tier = "database"
-  }
+  })
 }
 
 resource "aws_eip" "nat" {
@@ -69,9 +73,9 @@ resource "aws_eip" "nat" {
 
   domain = "vpc"
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "nat-eip-${count.index}"
-  }
+  })
 }
 
 resource "aws_nat_gateway" "nat" {
@@ -82,9 +86,9 @@ resource "aws_nat_gateway" "nat" {
 
   depends_on = [aws_internet_gateway.igw]
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "nat-${local.azs[count.index]}"
-  }
+  })
 }
 
 resource "aws_route_table" "public" {
@@ -95,9 +99,9 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.igw.id
   }
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "public-rt"
-  }
+  })
 }
 
 resource "aws_route_table_association" "public" {
@@ -117,9 +121,9 @@ resource "aws_route_table" "api" {
     nat_gateway_id = aws_nat_gateway.nat[count.index].id
   }
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "api-rt-${local.azs[count.index]}"
-  }
+  })
 }
 
 resource "aws_route_table_association" "api" {
@@ -139,9 +143,9 @@ resource "aws_route_table" "db" {
     nat_gateway_id = aws_nat_gateway.nat[count.index].id
   }
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "db-rt-${local.azs[count.index]}"
-  }
+  })
 }
 
 resource "aws_route_table_association" "db" {
@@ -156,7 +160,7 @@ resource "aws_db_subnet_group" "main" {
 
   subnet_ids = aws_subnet.db[*].id
 
-  tags = {
+  tags = merge(local.default_tags, {
     Name = "main-db-subnet-group"
-  }
+  })
 }
