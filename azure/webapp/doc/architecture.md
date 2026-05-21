@@ -1,6 +1,7 @@
 # Azure Webapp Architecture
 
 ```mermaid
+%%{init: { 'flowchart': { 'useMaxWidth': true }, 'themeVariables': { 'fontSize': '16px', 'diagramPadding': '24px' } }}%%
 flowchart TB
   subgraph root["azure/webapp/src"]
     common[common module]
