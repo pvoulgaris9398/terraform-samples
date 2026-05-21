@@ -21,9 +21,9 @@ flowchart TB
 
   subgraph net_mod["modules/network"]
     VNet[azurerm_virtual_network]
-    WebSubnet[azurerm_subnet.web[*]]
-    ApiSubnet[azurerm_subnet.api[*]]
-    DbSubnet[azurerm_subnet.db[*]]
+    WebSubnet[azurerm_subnet.web]
+    ApiSubnet[azurerm_subnet.api]
+    DbSubnet[azurerm_subnet.db]
     NATIP[azurerm_public_ip.nat]
     NATGW[azurerm_nat_gateway.main]
     NatAssoc[azurerm_nat_gateway_public_ip_association]
@@ -34,7 +34,7 @@ flowchart TB
     WebNSG[azurerm_network_security_group.web]
     ApiNSG[azurerm_network_security_group.api]
     DbNSG[azurerm_network_security_group.db]
-    NSGAssoc[azurerm_subnet_network_security_group_association[*]]
+    NSGAssoc[azurerm_subnet_network_security_group_association]
   end
 
   subgraph db_mod["modules/database"]
