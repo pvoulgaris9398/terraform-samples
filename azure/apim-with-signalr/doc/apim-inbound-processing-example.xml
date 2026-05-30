@@ -1,0 +1,32 @@
+<policies>
+    <inbound>
+        <base />
+        <!-- 1. Ensure CORS allows your frontend origin -->
+        <cors allow-credentials="true">
+            <allowed-origins>
+                <origin>https://your-dashboard-domain.com</origin>
+            </allowed-origins>
+            <allowed-methods preflight-result-max-age="300">
+                <method>GET</method>
+                <method>POST</method>
+                <method>OPTIONS</method>
+            </allowed-methods>
+            <allowed-headers>
+                <header>*</header>
+            </allowed-headers>
+        </cors>
+        
+        <!-- 2. Force HTTP/1.1 for WebSocket upgrades if backend doesn't support HTTP/2 WebSockets -->
+        <set-backend-service backend-id="backend-app-service" />
+    </inbound>
+    <backend>
+        <!-- 3. Crucial: Increase timeouts so idle WebSockets don't get abruptly closed by APIM -->
+        <forward-request timeout="3600" buffer-request-body="false" />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>

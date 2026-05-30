@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Real-Time APIM Dashboard</title>
+    <script src="https://cloudflare.com"></script>
+</head>
+
+<body>
+    <h1>System Live Metrics</h1>
+    <div>CPU Usage: <span id="cpu">0</span>%</div>
+    <div>Active Users: <span id="users">0</span></div>
+    <div id="logs" style="color: gray; margin-top: 20px;"></div>
+
+    <script>
+        // POINT THIS TO YOUR APIM GATEWAY URL (NOT the backend app directly)
+        const apimGatewayUrl = "https://azure-api.net";
+
+        const connection = new hubConnectionBuilder()
+            .withUrl(apimGatewayUrl)
+            .withAutomaticReconnect()
+            .build();
+
+        // Listen for real-time broadcasts
+        connection.on("ReceiveMetrics", (data) => {
+            document.getElementById("cpu").innerText = data.cpuUsage;
+            document.getElementById("users").innerText = data.activeUsers;
+        });
+
+        connection.on("ReceiveLog", (msg) => {
+            document.getElementById("logs").innerHTML += `<p>${msg}</p>`;
+        });
+
+        // Start connection
+        connection.start()
+            .then(() => console.log("Connected via APIM Gateway!"))
+            .catch(err => console.error("Connection failed: ", err));
+    </script>
+</body>
+
+</html>

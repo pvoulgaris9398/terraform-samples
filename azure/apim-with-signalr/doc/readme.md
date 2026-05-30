@@ -6,6 +6,19 @@
 
 ### `Saturday, 5/30/2026`
 
+- Got this infrastructure mostly deployed
+- Would like to:
+  - Add set of required tags for environment, etc.
+  - Add logic for naming resources that follow recommended conventions
+  - For example: `APIM`
+  - `{type}-{project}-{env}-{region}-{hash}`
+  - Use `uniqueString(resourceGroup().id)`
+  - `apim-coreapi-prod-use-a1b2c`
+  - `apim-payment-dev-eus-x9y8z`
+  - Limit of `50` characters, alphanumerics and hyphens only
+  - Start with a letter and end with letter or number
+  - [Naming Conventions](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules)
+
 - When deploying the current state of Infrastructure in terraform, I encountered:
 
 ![](2026-05-30-01.jpg)
