@@ -1,5 +1,5 @@
 resource "azurerm_api_management" "this" {
-  name                = "${var.prefix}-apim"
+  name                = join("-", compact([var.prefix, "apim", var.name_suffix]))
   location            = var.location
   resource_group_name = var.resource_group_name
   publisher_name      = var.publisher_name

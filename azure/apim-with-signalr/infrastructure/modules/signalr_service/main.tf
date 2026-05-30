@@ -1,5 +1,5 @@
 resource "azurerm_signalr_service" "this" {
-  name                = "${var.prefix}-signalr"
+  name                = join("-", compact([var.prefix, "signalr", var.name_suffix]))
   location            = var.location
   resource_group_name = var.resource_group_name
 

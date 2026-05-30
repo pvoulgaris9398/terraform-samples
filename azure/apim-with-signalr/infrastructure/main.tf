@@ -5,6 +5,13 @@ locals {
   })
 }
 
+resource "random_string" "suffix" {
+  length  = 6
+  upper   = false
+  lower   = false
+  numeric = true
+}
+
 module "resource_group" {
   source   = "./modules/resource_group"
   name     = var.resource_group_name
@@ -25,6 +32,7 @@ module "container_registry" {
   prefix              = var.prefix
   location            = module.resource_group.location
   resource_group_name = module.resource_group.name
+  name_suffix         = random_string.suffix.result
   tags                = local.common_tags
 }
 
@@ -42,6 +50,7 @@ module "signalr_service" {
   prefix              = var.prefix
   location            = module.resource_group.location
   resource_group_name = module.resource_group.name
+  name_suffix         = random_string.suffix.result
   tags                = local.common_tags
 }
 
@@ -52,6 +61,7 @@ module "api_management" {
   resource_group_name = module.resource_group.name
   publisher_name      = var.publisher_name
   publisher_email     = var.publisher_email
+  name_suffix         = random_string.suffix.result
   tags                = local.common_tags
 }
 
