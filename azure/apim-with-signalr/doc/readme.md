@@ -1,6 +1,33 @@
 # Azure Container Sample with SignalR
 
 - Running in `Azure App Management`
+- With `Azure Container App`s
+- With `Azure Log Analytics` workspace
+- With `Azure SignalR Service`
+- Remember to delete `Azure Container Registry` instance
+- I would think I could use `Docker Hub` for this purpose, which is free
+
+## Usage Scenarios/Best-Practices
+
+- To do.
+
+## Naming Conventions/Best-Practices
+
+- To do.
+
+## Cost Information
+
+- `Azure API Management` won't cost anything on the `Developer Tier` (I had to update the settings in the terraform to ensure this)
+- `Azure Container App` won't incur any charges if not in use (scaled to zero instances)
+  - Had to double-check my config and set `min_replicas` to zero (0)
+- `Azure Container App Environment` won't cause anything if on the `Consumption` plan and not being used
+- `Azure Log Analytics` workspace can have costs, but I should be OK because I haven't used it yet and don't plan to keep a lot of data around
+  - I am on recommended `pay-as-you-go` tier
+  - I am configured for 30 days
+  - Interesting setting: `PerGB2018`
+- `Azure SignalR Service` will not cost me anything on the `Free` tier (`Free_F1`)
+- `Azure Container Registry` instance will cost money even if not used, simply because it is provisioned
+  - I will manually delete via the portal
 
 ## Working Log
 

@@ -39,7 +39,7 @@ variable "memory" {
 
 variable "min_replicas" {
   type    = number
-  default = 1
+  default = 0
 }
 
 variable "max_replicas" {

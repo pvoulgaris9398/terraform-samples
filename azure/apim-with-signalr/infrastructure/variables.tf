@@ -47,23 +47,23 @@ variable "metrics_producer_image" {
 variable "dashboard_api_min_replicas" {
   description = "Minimum number of dashboard API container replicas."
   type        = number
-  default     = 1
+  default     = 0
 }
 
 variable "dashboard_api_max_replicas" {
   description = "Maximum number of dashboard API container replicas."
   type        = number
-  default     = 5
+  default     = 1
 }
 
 variable "metrics_producer_min_replicas" {
   description = "Minimum number of metrics producer container replicas."
   type        = number
-  default     = 1
+  default     = 0
 }
 
 variable "metrics_producer_max_replicas" {
   description = "Maximum number of metrics producer container replicas."
   type        = number
-  default     = 3
+  default     = 1
 }
