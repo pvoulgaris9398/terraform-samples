@@ -12,7 +12,7 @@ variable "resource_group_name" {
 
 variable "sku_name" {
   type    = string
-  default = "Standard_S1"
+  default = "Free_F1"
 }
 
 variable "capacity" {

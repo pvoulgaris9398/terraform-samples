@@ -22,7 +22,7 @@ variable "publisher_email" {
 
 variable "sku_name" {
   type    = string
-  default = "Consumption_0"
+  default = "Developer_1"
 }
 
 variable "tags" {

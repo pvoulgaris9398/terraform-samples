@@ -1,4 +1,6 @@
 resource "azurerm_api_management" "this" {
+  # Pattern: [type]-[workload]-[env]-[region]-[random]
+  # Resulting example: apim-coreapi-prod-eus-a1b2c
   name                = join("-", compact([var.prefix, "apim", var.name_suffix]))
   location            = var.location
   resource_group_name = var.resource_group_name
