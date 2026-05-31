@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "this" {
-  name     = join("-", compact(["rg", var.workload, var.environment, var.name_suffix]))
+  name     = join("-", compact(["rg", var.workload, var.environment]))
   location = var.location
   tags     = var.tags
 }
