@@ -1,6 +1,6 @@
 variable "location" {
   description = "Azure region where resources will be deployed. Use short region codes (e.g., eus, wus2, ukso)."
-  default     = "eus"
+  default     = "east-us"
 }
 
 variable "workload" {
