@@ -1,7 +1,7 @@
 locals {
   # Generate deterministic hash suffix from resource group ID for unique naming
   # This ensures the same suffix is used across all resources in the same deployment
-  name_suffix = substr(md5(module.resource_group.main.id), 0, 6)
+  name_suffix = substr(md5(module.resource_group.id), 0, 6)
 
   # Recommended tagging for Azure resources
   common_tags = merge(var.tags, {
