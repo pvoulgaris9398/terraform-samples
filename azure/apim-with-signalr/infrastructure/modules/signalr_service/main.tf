@@ -1,5 +1,7 @@
 resource "azurerm_signalr_service" "this" {
-  name                = join("-", compact([var.prefix, "signalr", var.name_suffix]))
+  # Pattern: svc-[workload]-[environment]-[instance]
+  # Example: svc-dashboard-dev-a1b2c
+  name                = join("-", compact(["svc", var.workload, var.environment, var.name_suffix]))
   location            = var.location
   resource_group_name = var.resource_group_name
 

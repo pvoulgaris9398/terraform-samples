@@ -1,21 +1,31 @@
 variable "location" {
-  description = "Azure region where resources will be deployed."
-  default     = "East US"
+  description = "Azure region where resources will be deployed. Use short region codes (e.g., eus, wus2, ukso)."
+  default     = "eus"
 }
 
-variable "resource_group_name" {
-  description = "Name of the Azure resource group."
-  default     = "rg-realtime-dashboard"
-}
-
-variable "prefix" {
-  description = "Prefix used for all resource naming."
-  default     = "realtimedemo"
+variable "workload" {
+  description = "Workload name for resource naming conventions. Used in resource names following CAF naming."
+  default     = "dashboard"
 }
 
 variable "environment" {
-  description = "Deployment environment for tagging."
+  description = "Deployment environment (dev, staging, prod) for tagging and naming."
   default     = "dev"
+}
+
+variable "owner" {
+  description = "Owner or team responsible for the resources."
+  default     = "platform-team"
+}
+
+variable "cost_center" {
+  description = "Cost center for billing and chargeback."
+  default     = ""
+}
+
+variable "prefix" {
+  description = "Legacy: Prefix used for resource naming. Consider using workload instead."
+  default     = "realtimedemo"
 }
 
 variable "tags" {

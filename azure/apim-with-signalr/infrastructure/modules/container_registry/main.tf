@@ -1,5 +1,7 @@
 resource "azurerm_container_registry" "this" {
-  name                = lower(replace("${var.prefix}${var.name_suffix}acr", "-", ""))
+  # ACR names must be lowercase alphanumeric, no hyphens
+  # Pattern: acr[workload][environment][suffix]
+  name                = lower(replace("acr${var.workload}${var.environment}${var.name_suffix}", "-", ""))
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = var.sku

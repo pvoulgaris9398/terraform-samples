@@ -1,5 +1,5 @@
 resource "azurerm_container_app_environment" "this" {
-  name                       = "${var.prefix}-env"
+  name                       = join("-", compact(["cae", var.workload, var.environment, var.name_suffix]))
   location                   = var.location
   resource_group_name        = var.resource_group_name
   log_analytics_workspace_id = var.log_analytics_workspace_id
