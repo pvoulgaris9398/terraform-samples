@@ -31,6 +31,10 @@
 
 ## Working Log
 
+### `Sunday, 5/31/2026`
+
+- Working through [this](https://learn.microsoft.com/en-us/aspnet/core/tutorials/signalr?view=aspnetcore-10.0&tabs=visual-studio-code)
+
 ### `Saturday, 5/30/2026`
 
 - Got this infrastructure mostly deployed
