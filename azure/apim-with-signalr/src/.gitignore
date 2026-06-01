@@ -1,0 +1,9 @@
+# Ignore all .obj files
+*.obj
+
+# Ignore .NET build/intermediate folders
+[Oo]bj/
+**/[Oo]bj/
+
+[Bb]in/
+[Oo]bj/
