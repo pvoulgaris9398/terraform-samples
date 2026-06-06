@@ -163,7 +163,7 @@ resource "azurerm_key_vault" "kv" {
 resource "azurerm_key_vault_access_policy" "ca_policy" {
   key_vault_id       = azurerm_key_vault.kv.id
   tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = azurerm_container_app.ca.identity.principal_id
+  object_id          = azurerm_container_app.ca.identity[0].principal_id
   secret_permissions = ["Get", "List"]
 }
 
@@ -194,7 +194,7 @@ resource "azurerm_api_management_api" "backend_api" {
   display_name        = "Core Backend API"
   path                = "v1"
   protocols           = ["https"]
-  service_url         = "https://${azurerm_container_app.ca.ingress.fqdn}"
+  service_url         = "https://${azurerm_container_app.ca.ingress[0].fqdn}"
 }
 
 resource "azurerm_api_management_api_operation" "catch_all" {
@@ -226,7 +226,7 @@ resource "azurerm_api_management_api_policy" "routing_policy" {
             <value>@(context.Request.Headers.GetValueOrDefault("Host"))</value>
         </set-header>
         <set-header name="Host" exists-action="override">
-            <value>${azurerm_container_app.ca.ingress.fqdn}</value>
+            <value>${azurerm_container_app.ca.ingress[0].fqdn}</value>
         </set-header>
     </inbound>
     <backend>
@@ -374,7 +374,7 @@ output "apim_public_gateway_url" {
 }
 
 output "isolated_container_app_url" {
-  value       = "https://${azurerm_container_app.ca.ingress.fqdn}"
+  value       = "https://${azurerm_container_app.ca.ingress[0].fqdn}"
   description = "The raw Container App URL. Testing this from home will return a network rejection, verifying your lockdown works."
 }
 
