@@ -256,3 +256,129 @@ resource "azurerm_signalr_service" "signalr" {
     name     = "Free_F1"
   }
 }
+
+# ==============================================================================
+# 1. SIGNALR APIM API DEFINITIONS
+# ==============================================================================
+
+# -- Part A: The HTTP Negotiate API Endpoint --
+resource "azurerm_api_management_api" "signalr_negotiate" {
+  name                = "signalr-negotiate-api"
+  resource_group_name = azurerm_resource_group.rg.name
+  api_management_name = azurerm_api_management.apim.name
+  revision            = "1"
+  display_name        = "SignalR Handshake (Negotiate)"
+  path                = "client/negotiate" # Exposed as: https://<apim-url>/client/negotiate
+  protocols           = ["https"]
+
+  # Routes the initial handshake authentication request down to the SignalR instance
+  service_url = "https://${azurerm_signalr_service.signalr.hostname}/client/negotiate"
+}
+
+# Registers the required POST operation rule for SignalR negotiation
+resource "azurerm_api_management_api_operation" "negotiate_post" {
+  operation_id        = "signalr-negotiate-post"
+  api_name            = azurerm_api_management_api.signalr_negotiate.name
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = azurerm_resource_group.rg.name
+  display_name        = "Negotiate Handshake Authorization"
+  method              = "POST"
+  url_template        = "/"
+}
+
+# -- Part B: The Persistent WebSocket Tunnel API Endpoint --
+resource "azurerm_api_management_api" "signalr_connect" {
+  name                = "signalr-connect-api"
+  resource_group_name = azurerm_resource_group.rg.name
+  api_management_name = azurerm_api_management.apim.name
+  revision            = "1"
+  display_name        = "SignalR WebSocket Connection"
+  path                = "client"      # Exposed as: wss://<apim-url>/client
+  protocols           = ["wss", "ws"] # Enforces persistent duplex upgrade tunnels
+
+  service_url = "wss://${azurerm_signalr_service.signalr.hostname}/client"
+}
+
+
+# ==============================================================================
+# 2. FIREWALL & ROUTING POLICIES FOR SIGNALR PIPELINES
+# ==============================================================================
+
+# Protects the Negotiation API with your Home IP Lock
+resource "azurerm_api_management_api_policy" "negotiate_policy" {
+  api_name            = azurerm_api_management_api.signalr_negotiate.name
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = azurerm_resource_group.rg.name
+
+  xml_content = <<XML
+<policies>
+    <inbound>
+        <base />
+        <!-- LAYER 1 SECURE FIREWALL: Drops anyone who isn't trying to connect from your Home IP -->
+        <ip-filter action="allow">
+            <address>${var.my_home_ip}</address>
+        </ip-filter>
+        
+        <!-- Appends the mandatory SignalR backend host header mapping -->
+        <set-header name="Host" exists-action="override">
+            <value>${azurerm_signalr_service.signalr.hostname}</value>
+        </set-header>
+    </inbound>
+    <backend><base /></backend>
+    <outbound><base /></outbound>
+    <on-error><base /></on-error>
+</policies>
+XML
+}
+
+# Protects the WebSocket Tunnel API with your Home IP Lock
+resource "azurerm_api_management_api_policy" "connect_policy" {
+  api_name            = azurerm_api_management_api.signalr_connect.name
+  api_management_name = azurerm_api_management.apim.name
+  resource_group_name = azurerm_resource_group.rg.name
+
+  xml_content = <<XML
+<policies>
+    <inbound>
+        <base />
+        <!-- LAYER 1 SECURE FIREWALL: Only allows the websocket handshake to occur from your Home IP -->
+        <ip-filter action="allow">
+            <address>${var.my_home_ip}</address>
+        </ip-filter>
+        
+        <set-header name="Host" exists-action="override">
+            <value>${azurerm_signalr_service.signalr.hostname}</value>
+        </set-header>
+    </inbound>
+    <backend><base /></backend>
+    <outbound><base /></outbound>
+    <on-error><base /></on-error>
+</policies>
+XML
+}
+
+# ==============================================================================
+# 3. COMPLEMENTARY OUTPUT STRINGS
+# ==============================================================================
+output "signalr_apim_negotiate_url" {
+  value       = azurerm_api_management_api.signalr_negotiate.service_url
+  description = "The gateway endpoint target for incoming real-time handshakes."
+}
+
+# ==============================================================================
+# 7. POST-DEPLOYMENT OPERATIONAL OUTPUTS
+# ==============================================================================
+output "apim_public_gateway_url" {
+  value       = "${azurerm_api_management.apim.gateway_url}/v1/"
+  description = "The target endpoint URL you use to make API calls from home."
+}
+
+output "isolated_container_app_url" {
+  value       = "https://${azurerm_container_app.ca.ingress.fqdn}"
+  description = "The raw Container App URL. Testing this from home will return a network rejection, verifying your lockdown works."
+}
+
+output "key_vault_uri" {
+  value       = azurerm_key_vault.kv.vault_uri
+  description = "The URI of the created Azure Key Vault."
+}
