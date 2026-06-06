@@ -119,6 +119,26 @@ resource "azurerm_container_app" "ca" {
         value = azurerm_key_vault_secret.cosmos_connection_string.id
       }
     }
+
+    min_replicas = 1  # Minimum instances running at all times (Set to 0 to scale to zero)
+    max_replicas = 10 # Hard ceiling to control costs and prevent runaway scaling
+
+    # Rule 1: Scale based on HTTP Traffic Volume
+    # If an instance sustains more than 50 concurrent requests, Azure spins up another replica.
+    http_scale_rule {
+      name                = "http-rule"
+      concurrent_requests = "50" # Must be a string
+    }
+
+    # Rule 2: Scale based on CPU Load
+    # If average CPU utilization exceeds 80%, Azure spins up another replica.
+    custom_scale_rule {
+      name             = "cpu-rule"
+      custom_rule_type = "cpu"
+      metadata = {
+        value = "80"
+      }
+    }
   }
 }
 
