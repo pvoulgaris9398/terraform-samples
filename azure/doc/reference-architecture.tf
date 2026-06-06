@@ -114,6 +114,11 @@ resource "azurerm_container_app" "ca" {
       image  = "://microsoft.com"
       cpu    = "0.25"
       memory = "0.5Gi"
+      # Inject the OTel Connection String securely via Environment Variables
+      env {
+        name  = "APPLICATIONINSIGHTS_CONNECTION_STRING"
+        value = azurerm_application_insights.app_insights.connection_string
+      }
       env {
         name  = "COSMOS_SECRET_URL"
         value = azurerm_key_vault_secret.cosmos_connection_string.id
